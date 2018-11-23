@@ -7,7 +7,7 @@ setuptools.setup(
     name="ssdp_upnp",
     version="0.0.1",
     author="tw7613781",
-    author_email="tw7613781@gmail..com",
+    author_email="tw7613781@gmail.com",
     description="ssdp server and client of upnp",
     long_description=long_description,
     long_description_content_type="text/markdown",
