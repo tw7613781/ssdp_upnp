@@ -10,6 +10,11 @@ The logic of server is just listen a broadcast address with port 1900. If it rec
 The package can be used in blockchain solution where peers to find each other in LAN environment. 
 
 ## example
+```
+pip install ssdp-upnp
+```
+```
+
 
     import sys
     from ssdp_upnp.ssdp import Server, Client
@@ -32,3 +37,4 @@ The package can be used in blockchain solution where peers to find each other in
                 logger.warning('need params server or clinet')
         except Exception as e:
             logger.error(e)
+```
