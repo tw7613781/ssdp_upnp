@@ -1,8 +1,6 @@
 import colorlog
 import socket
 
-logger = gen_logger('util')
-
 def gen_logger(name, level='DEBUG'):
     fmt = '%(log_color)s %(levelname)8s [%(asctime)s] %(name)s-%(threadName)-15s %(message)s'
     handler = colorlog.StreamHandler()
@@ -21,5 +19,4 @@ def get_local_IP():
         host_ip = socket.gethostbyname(host_name) 
         return host_ip
     except Exception as e:
-        logger.error("Unable to get Hostname and IP: {e}") 
-        raise e 
+        raise 'Unable to get Hostname and IP: {}'.format(e) 

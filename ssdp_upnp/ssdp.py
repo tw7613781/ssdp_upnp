@@ -1,16 +1,14 @@
-from util import gen_logger, get_local_IP
+from ssdp_upnp.util import gen_logger, get_local_IP
 import os
 import socket
 import re
 import sys
 import time
+import threading
 
 logger = gen_logger('upnp')
-
-
-        
   
-class UpnpServer():
+class Server(threading.Thread):
 
     BCAST_IP = '239.255.255.250'
     UPNP_PORT = 1900
@@ -21,6 +19,7 @@ class UpnpServer():
         '''
         port: a blockchain network port to broadcast to others
         '''
+        threading.Thread.__init__(self)
         self.interrupted = False
         self.port = port
         self.protocol = protocal
@@ -41,6 +40,7 @@ class UpnpServer():
         '''
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, socket.inet_aton(self.BCAST_IP) + socket.inet_aton(self.IP))
             sock.bind((self.IP, self.UPNP_PORT))
             sock.settimeout(1)
@@ -54,7 +54,7 @@ class UpnpServer():
                         return
                 else:
                     if self.M_SEARCH_REQ_MATCH in data.decode('ASCII'):
-                        # logger.info("received M-SEARCH from %s \n %s", addr, data)
+                        logger.info("received M-SEARCH from %s \n %s", addr, data)
                         self.respond(addr)
         except Exception as e:
             logger.error('Error in npnp server listening: %s', e)
@@ -76,18 +76,19 @@ class UpnpServer():
             logger.error('Error in upnp response message to client %s', e)
 
 
-class UpnpClient:
+class Client(threading.Thread):
 
     # 30 seconds for search_interval
     SEARCH_INTERVAL = 5
     BCAST_IP = '239.255.255.250'
     BCAST_PORT = 1900
 
-    def __init__(self, network, protocol, networkid):
-        self.network = network
+    def __init__(self, protocol, networkid, queue):
+        threading.Thread.__init__(self)
         self.interrupted = False
         self.protocol = protocol
         self.networkid = networkid
+        self.queue = queue
     
     def run(self):
         self.keep_search()
@@ -132,27 +133,8 @@ class UpnpClient:
                 location_result = LOCATION_REGEX.search(data.decode('ASCII'))
                 if location_result:
                     peer_ip, peer_port = location_result.group(1).split(":")
-                    self.add_to_network(peer_ip, int(peer_port))
+                    logger.info('{}:{} is running the same protocal'.format(peer_ip, peer_port))
+                    self.queue.put((peer_ip, peer_port))
         except:
             sock.close()
-    
-    def add_to_network(self, ip, port):
-        # self.network.add_peer(ip, port)
-        logger.info('%s:%s added to network', ip, port)
-
-
-
-if __name__ == '__main__':
-    try:
-        if sys.argv[1] == 'server':
-            upnpServer  = UpnpServer(8048, 'visiblespectre', 'main')
-            upnpServer.run()
-        elif sys.argv[1] == 'client':
-            upnpClient = UpnpClient(None, 'visiblespectre', 'main')
-            upnpClient.run()
-        else:
-            logger.warning('need params server or clinet')
-    except Exception as e:
-        logger.error(e)
-
 
