@@ -1,7 +1,7 @@
 import colorlog
 import socket
 
-def gen_logger(name, level='DEBUG'):
+def gen_logger(name, level='INFO'):
     fmt = '%(log_color)s %(levelname)8s [%(asctime)s] %(name)s-%(threadName)-15s %(message)s'
     handler = colorlog.StreamHandler()
     handler.setFormatter(colorlog.ColoredFormatter(fmt))

@@ -54,7 +54,7 @@ class Server(threading.Thread):
                         return
                 else:
                     if self.M_SEARCH_REQ_MATCH in data.decode('ASCII'):
-                        logger.info("received M-SEARCH from %s \n %s", addr, data)
+                        logger.debug("received M-SEARCH from %s \n %s", addr, data)
                         self.respond(addr)
         except Exception as e:
             logger.error('Error in npnp server listening: %s', e)
@@ -70,7 +70,7 @@ class Server(threading.Thread):
             """.format(self.protocol, self.networkid, local_ip, self.port).replace("\n", "\r\n")
             outSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             outSock.sendto(UPNP_RESPOND.encode('ASCII'), addr)
-            # logger.warning('response data: %s', UPNP_RESPOND)
+            logger.debug('response data: %s', UPNP_RESPOND)
             outSock.close()
         except Exception as e:
             logger.error('Error in upnp response message to client %s', e)
@@ -129,7 +129,7 @@ class Client(threading.Thread):
             sock.settimeout(3)
             while True:
                 data, addr = sock.recvfrom(1024)
-                # logger.info('found data: %s', data.decode('ASCII'))
+                logger.debug('found data: %s', data.decode('ASCII'))
                 location_result = LOCATION_REGEX.search(data.decode('ASCII'))
                 if location_result:
                     peer_ip, peer_port = location_result.group(1).split(":")
