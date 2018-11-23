@@ -8,11 +8,11 @@ logger = gen_logger('sample')
 if __name__ == '__main__':
     try:
         if sys.argv[1] == 'server':
-            upnpServer  = Server(8048, 'visiblespectre', 'main')
+            upnpServer  = Server(8048, 'blockchain', 'main')
             upnpServer.start()
         elif sys.argv[1] == 'client':
             queue = Queue()
-            upnpClient = Client('visiblespectre', 'main', queue)
+            upnpClient = Client('blockchain', 'main', queue)
             upnpClient.start()
             logger.info(queue.get())
         else:
