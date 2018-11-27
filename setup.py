@@ -15,7 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
         'colorlog>=3.1.4',
-        'miniupnpc=2.0.2'
+        'miniupnpc>=2.0.2'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
