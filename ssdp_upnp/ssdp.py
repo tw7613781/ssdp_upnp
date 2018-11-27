@@ -5,6 +5,7 @@ import re
 import sys
 import time
 import threading
+import miniupnpc
 
 logger = gen_logger('upnp')
   
@@ -138,3 +139,32 @@ class Client(threading.Thread):
         except:
             sock.close()
 
+class Nat():
+    def __init__(self):
+        self.upnp = miniupnpc.UPnP()
+        self.upnp.discoverdelay = 10
+    
+    def addPortForward(self, internal_port, external_port):
+        try:
+            discover = self.upnp.discover()
+            igd = self.upnp.selectigd()
+            # addportmapping(external-port, protocol, internal-host, internal-port, description, remote-host) 
+            port_result = self.upnp.addportmapping(external_port, 'TCP', self.upnp.lanaddr, internal_port, 'spectre upnp nap mapping', '')
+            # logger.info('Port Forward Attempt: Mapping {0} --> {1} ... {2}'.format(internal_port, external_port, 'OK' if port_result else 'Fail'))
+            # if succeed, return (external_ip, external_port)
+            return (self.upnp.externalipaddress(), external_port)
+        except Exception as e:
+            logger.error('Error in upnp nat port forward: %s', e)
+            # Bind find, return None
+            return None
+
+    def removePortForward(self, external_port):
+        try:
+            discover = self.upnp.discover()
+            igd = self.upnp.selectigd()
+            port_result = self.upnp.deleteportmapping(external_port, 'TCP')
+            logger.info("Port Delete Attempt: ~{0} ... {1}".format( external_port, 'OK' if port_result else 'Fail'))
+            return True
+        except Exception as e:
+            logger.error('Error in upnp nat port remove: %s', e)
+            return False

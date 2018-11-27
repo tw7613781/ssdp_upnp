@@ -14,7 +14,8 @@ setuptools.setup(
     url="https://github.com/tw7613781/ssdp_upnp",
     packages=setuptools.find_packages(),
     install_requires=[
-        'colorlog>=3.1.4'
+        'colorlog>=3.1.4',
+        'miniupnpc=2.0.2'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
