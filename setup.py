@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ssdp_upnp",
-    version="0.0.2",
+    version="0.1.0",
     author="tw7613781",
     author_email="tw7613781@gmail.com",
     description="ssdp server and client of upnp",
